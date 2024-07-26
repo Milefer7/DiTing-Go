@@ -300,7 +300,7 @@ func DeleteGroupService(c *gin.Context) {
 //	@Param		id	body		int					true	"房间id"
 //	@Success	200	{object}	resp.ResponseData	"成功"
 //	@Failure	500	{object}	resp.ResponseData	"内部错误"
-//	@Router		/api/group/create [post]
+//	@Router		/api/group/join [post]
 func JoinGroupService(c *gin.Context) {
 	uid := c.GetInt64("uid")
 	joinGroupReq := req.JoinGroupReq{}
@@ -427,7 +427,7 @@ func JoinGroupService(c *gin.Context) {
 //	@Param		id	body		int					true	"房间id"
 //	@Success	200	{object}	resp.ResponseData	"成功"
 //	@Failure	500	{object}	resp.ResponseData	"内部错误"
-//	@Router		/api/group/create [post]
+//	@Router		/api/group/quit [post]
 func QuitGroupService(c *gin.Context) {
 	uid := c.GetInt64("uid")
 	quitGroupReq := req.QuitGroupReq{}
@@ -597,7 +597,7 @@ func GetGroupMemberListService(c *gin.Context) {
 //	@Param		grant_uid	body		int					true	"授权用户id"
 //	@Success	200	{object}	resp.ResponseData	"成功"
 //	@Failure	500	{object}	resp.ResponseData	"内部错误"
-//	@Router		/api/group/getGroupMemberList [get]
+//	@Router		/api/group/grantAdministrator [post]
 func GrantAdministratorService(c *gin.Context) {
 	uid := c.GetInt64("uid")
 	grantAdministratorReq := req.GrantAdministratorReq{}
@@ -669,7 +669,7 @@ func GrantAdministratorService(c *gin.Context) {
 //	@Param		remove_uid	body		int					true	"授权用户id"
 //	@Success	200	{object}	resp.ResponseData	"成功"
 //	@Failure	500	{object}	resp.ResponseData	"内部错误"
-//	@Router		/api/group/getGroupMemberList [get]
+//	@Router		/api/group/removeAdministrator [post]
 func RemoveAdministratorService(c *gin.Context) {
 	uid := c.GetInt64("uid")
 	removeAdministratorReq := req.RemoveAdministratorReq{}

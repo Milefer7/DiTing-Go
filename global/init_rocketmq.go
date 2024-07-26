@@ -23,6 +23,6 @@ func init() {
 	// 开始连接
 	err := RocketProducer.Start()
 	if err != nil {
-		Logger.Panicf("start producer error: %s", err.Error())
+		Logger.Panicf(": %s", err.Error())
 	}
 }

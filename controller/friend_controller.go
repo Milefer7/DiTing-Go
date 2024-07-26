@@ -151,6 +151,16 @@ func UnreadApplyNumController(c *gin.Context) {
 	resp.ReturnSuccessResponse(c, response)
 }
 
+// GetFriendListController 获取好友列表
+//
+//	@Summary	获取好友列表
+//	@Produce	json
+//	@Param		uid	query		int64				true	"用户ID"
+//	@Param		page	query		int				false	"页码"
+//	@Param		size	query		int				false	"每页数量"
+//	@Success	200	{object}	resp.ResponseData	"成功"
+//	@Failure	500	{object}	resp.ResponseData	"内部错误"
+//	@Router		/api/user/getFriendList [get]
 func GetFriendListController(c *gin.Context) {
 	uid := c.GetInt64("uid")
 	pageRequest := pkgReq.PageReq{}
@@ -168,6 +178,14 @@ func GetFriendListController(c *gin.Context) {
 }
 
 // GetUserInfoByNameController 根据好友昵称搜索好友
+//
+//	@Summary	根据好友昵称搜索好友
+//	@Produce	json
+//	@Param		uid	query		int64				true	"用户ID"
+//	@Param		name	query		string				true	"好友昵称"
+//	@Success	200	{object}	resp.ResponseData	"成功"
+//	@Failure	500	{object}	resp.ResponseData	"内部错误"
+//	@Router		/api/user/getUserInfoByName [get]
 func GetUserInfoByNameController(c *gin.Context) {
 	uid := c.GetInt64("uid")
 	getUserInfoByNameReq := req.GetUserInfoByNameReq{}

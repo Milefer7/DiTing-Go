@@ -4,25 +4,272 @@
         "contact": {}
     },
     "paths": {
-        "/api/contact/add": {
+        "/api/chat/msg": {
             "post": {
                 "produces": [
                     "application/json"
                 ],
-                "summary": "添加好友",
+                "summary": "发送消息",
                 "parameters": [
                     {
-                        "description": "好友uid",
-                        "name": "uid",
+                        "description": "消息请求体",
+                        "name": "messageReq",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "integer"
+                            "$ref": "#/definitions/req.MessageReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/resp.ResponseData"
                         }
                     },
+                    "500": {
+                        "description": "内部错误",
+                        "schema": {
+                            "$ref": "#/definitions/resp.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/contact/getContactDetail": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "获取联系人详情",
+                "parameters": [
                     {
-                        "description": "验证消息",
-                        "name": "msg",
+                        "type": "integer",
+                        "description": "房间ID",
+                        "name": "roomId",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/resp.ResponseData"
+                        }
+                    },
+                    "500": {
+                        "description": "内部错误",
+                        "schema": {
+                            "$ref": "#/definitions/resp.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/contact/getContactList": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "获取联系人列表",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "用户ID",
+                        "name": "uid",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "游标，用于分页查询",
+                        "name": "cursor",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页数量，默认为20",
+                        "name": "pageSize",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/resp.ResponseData"
+                        }
+                    },
+                    "500": {
+                        "description": "内部错误",
+                        "schema": {
+                            "$ref": "#/definitions/resp.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/contact/getNewContactList": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "获取新的联系人列表",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "用户ID",
+                        "name": "uid",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "时间戳，用于获取此时间之后的新联系人",
+                        "name": "timestamp",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/resp.ResponseData"
+                        }
+                    },
+                    "500": {
+                        "description": "内部错误",
+                        "schema": {
+                            "$ref": "#/definitions/resp.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/contact/getNewMsgList": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "获取新的消息列表",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "消息ID",
+                        "name": "msgId",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "房间ID",
+                        "name": "roomId",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/resp.ResponseData"
+                        }
+                    },
+                    "500": {
+                        "description": "内部错误",
+                        "schema": {
+                            "$ref": "#/definitions/resp.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/contact/userInfo/batch": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "获取批量用户信息",
+                "parameters": [
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        },
+                        "collectionFormat": "csv",
+                        "description": "用户ID列表",
+                        "name": "uidList",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/resp.ResponseData"
+                        }
+                    },
+                    "500": {
+                        "description": "内部错误",
+                        "schema": {
+                            "$ref": "#/definitions/resp.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/file/getPreSigned": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "签发url",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "房间ID",
+                        "name": "roomId",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "文件名",
+                        "name": "fileName",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/resp.ResponseData"
+                        }
+                    },
+                    "500": {
+                        "description": "内部错误",
+                        "schema": {
+                            "$ref": "#/definitions/resp.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/group/:id": {
+            "delete": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "删除群聊",
+                "parameters": [
+                    {
+                        "description": "房间ID",
+                        "name": "id",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -46,21 +293,30 @@
                 }
             }
         },
-        "/api/contact/delete": {
-            "put": {
+        "/api/group/create": {
+            "post": {
                 "produces": [
                     "application/json"
                 ],
-                "summary": "同意好友申请",
+                "summary": "创建群聊",
                 "parameters": [
                     {
-                        "description": "好友uid",
+                        "type": "integer",
+                        "description": "用户ID",
                         "name": "uid",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "array",
+                        "items": {
                             "type": "integer"
-                        }
+                        },
+                        "collectionFormat": "csv",
+                        "description": "群聊成员ID列表",
+                        "name": "uidList",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -77,16 +333,18 @@
                         }
                     }
                 }
-            },
-            "delete": {
+            }
+        },
+        "/api/group/getGroupMemberList": {
+            "get": {
                 "produces": [
                     "application/json"
                 ],
-                "summary": "删除好友",
+                "summary": "退出群聊",
                 "parameters": [
                     {
-                        "description": "好友uid",
-                        "name": "uid",
+                        "description": "房间id",
+                        "name": "id",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -110,31 +368,138 @@
                 }
             }
         },
-        "/api/contact/getApplyList": {
-            "get": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
+        "/api/group/grantAdministrator": {
+            "post": {
                 "produces": [
                     "application/json"
                 ],
-                "summary": "获取用户好友申请列表",
+                "summary": "授予管理员权限",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "last_id",
-                        "name": "last_id",
-                        "in": "query",
-                        "required": true
+                        "description": "房间id",
+                        "name": "room_id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
                     },
                     {
-                        "type": "integer",
-                        "description": "limit",
-                        "name": "limit",
-                        "in": "query",
-                        "required": true
+                        "description": "授权用户id",
+                        "name": "grant_uid",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/resp.ResponseData"
+                        }
+                    },
+                    "500": {
+                        "description": "内部错误",
+                        "schema": {
+                            "$ref": "#/definitions/resp.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/group/join": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "加入群聊",
+                "parameters": [
+                    {
+                        "description": "房间id",
+                        "name": "id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/resp.ResponseData"
+                        }
+                    },
+                    "500": {
+                        "description": "内部错误",
+                        "schema": {
+                            "$ref": "#/definitions/resp.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/group/quit": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "退出群聊",
+                "parameters": [
+                    {
+                        "description": "房间id",
+                        "name": "id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/resp.ResponseData"
+                        }
+                    },
+                    "500": {
+                        "description": "内部错误",
+                        "schema": {
+                            "$ref": "#/definitions/resp.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/group/removeAdministrator": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "移除管理员权限",
+                "parameters": [
+                    {
+                        "description": "房间id",
+                        "name": "room_id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "授权用户id",
+                        "name": "remove_uid",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
                     }
                 ],
                 "responses": {
@@ -236,9 +601,316 @@
                     }
                 }
             }
+        },
+        "/api/user/add": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "添加好友",
+                "parameters": [
+                    {
+                        "description": "好友uid",
+                        "name": "uid",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "验证消息",
+                        "name": "msg",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/resp.ResponseData"
+                        }
+                    },
+                    "500": {
+                        "description": "内部错误",
+                        "schema": {
+                            "$ref": "#/definitions/resp.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/user/agree": {
+            "put": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "同意好友申请",
+                "parameters": [
+                    {
+                        "description": "好友uid",
+                        "name": "uid",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/resp.ResponseData"
+                        }
+                    },
+                    "500": {
+                        "description": "内部错误",
+                        "schema": {
+                            "$ref": "#/definitions/resp.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/user/delete/:uid": {
+            "delete": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "删除好友",
+                "parameters": [
+                    {
+                        "description": "好友uid",
+                        "name": "uid",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/resp.ResponseData"
+                        }
+                    },
+                    "500": {
+                        "description": "内部错误",
+                        "schema": {
+                            "$ref": "#/definitions/resp.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/user/getApplyList": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "同意好友申请",
+                "parameters": [
+                    {
+                        "description": "好友uid",
+                        "name": "uid",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/resp.ResponseData"
+                        }
+                    },
+                    "500": {
+                        "description": "内部错误",
+                        "schema": {
+                            "$ref": "#/definitions/resp.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/user/getFriendList": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "获取好友列表",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "用户ID",
+                        "name": "uid",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页数量",
+                        "name": "size",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/resp.ResponseData"
+                        }
+                    },
+                    "500": {
+                        "description": "内部错误",
+                        "schema": {
+                            "$ref": "#/definitions/resp.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/user/getUserInfoByName": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "根据好友昵称搜索好友",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "用户ID",
+                        "name": "uid",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "好友昵称",
+                        "name": "name",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/resp.ResponseData"
+                        }
+                    },
+                    "500": {
+                        "description": "内部错误",
+                        "schema": {
+                            "$ref": "#/definitions/resp.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/user/isFriend/:friendUid": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "是否为好友关系",
+                "parameters": [
+                    {
+                        "description": "好友uid",
+                        "name": "uid",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/resp.ResponseData"
+                        }
+                    },
+                    "500": {
+                        "description": "内部错误",
+                        "schema": {
+                            "$ref": "#/definitions/resp.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/user/unreadApplyNum": {
+            "get": {
+                "summary": "好友申请未读数量",
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/resp.ResponseData"
+                        }
+                    },
+                    "500": {
+                        "description": "内部错误",
+                        "schema": {
+                            "$ref": "#/definitions/resp.ResponseData"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
+        "req.MessageBody": {
+            "type": "object",
+            "required": [
+                "content"
+            ],
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "replyMsgId": {
+                    "type": "integer"
+                }
+            }
+        },
+        "req.MessageReq": {
+            "type": "object",
+            "required": [
+                "body",
+                "msgType",
+                "roomId"
+            ],
+            "properties": {
+                "body": {
+                    "$ref": "#/definitions/req.MessageBody"
+                },
+                "msgType": {
+                    "type": "integer"
+                },
+                "roomId": {
+                    "type": "integer"
+                }
+            }
+        },
         "resp.ResponseData": {
             "type": "object",
             "properties": {
@@ -252,6 +924,10 @@
                 "message": {
                     "description": "响应消息",
                     "type": "string"
+                },
+                "success": {
+                    "description": "是否成功",
+                    "type": "boolean"
                 }
             }
         }

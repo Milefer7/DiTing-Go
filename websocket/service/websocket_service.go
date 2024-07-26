@@ -56,7 +56,7 @@ func Connect(w http.ResponseWriter, r *http.Request) {
 
 	//连接成功后注册用户
 	// 将uid转换为string
-	stringUid := strconv.FormatInt(*uid, 10)
+	stringUid := strconv.FormatInt(*uid, 10) // 表示转换为10进制
 	userChannel := global.Channels{
 		Uid:         *uid,
 		ChannelList: make([]*websocket.Conn, 0),

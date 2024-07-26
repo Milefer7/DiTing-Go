@@ -276,6 +276,14 @@ func GetNewContactListService(uid int64, timestamp int64) (pkgResp.ResponseData,
 	return pkgResp.SuccessResponseData(contactDaoList), nil
 }
 
+// GetContactDetailService 获取联系人详情
+//
+//	@Summary	获取联系人详情
+//	@Produce	json
+//	@Param		roomId	query		int64				true	"房间ID"
+//	@Success	200	{object}	resp.ResponseData	"成功"
+//	@Failure	500	{object}	resp.ResponseData	"内部错误"
+//	@Router		/api/contact/getContactDetail [get]
 func GetContactDetailService(c *gin.Context) {
 	uid := c.GetInt64("uid")
 	getMessageListReq := req.GetMessageListReq{}

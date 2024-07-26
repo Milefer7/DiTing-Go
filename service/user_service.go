@@ -22,35 +22,44 @@ import (
 var q *query.Query = global.Query
 
 // RegisterService 用户注册
+// RegisterService 是用户注册服务的实现
 func RegisterService(userReq req.UserRegisterReq) (pkgResp.ResponseData, error) {
+	// 创建一个新的上下文
 	ctx := context.Background()
+	// 获取全局的用户查询对象
 	user := global.Query.User
+	// 将上下文添加到用户查询对象中
 	userQ := user.WithContext(ctx)
+	// 定义一个函数，该函数将在数据库中查找与请求中的用户名匹配的用户
 	fun := func() (interface{}, error) {
 		return userQ.Where(user.Name.Eq(userReq.Username)).First()
 	}
+	// 创建一个用户模型对象
 	userR := model.User{}
+	// 生成一个缓存键，该键基于请求中的用户名
 	key := fmt.Sprintf(domainEnum.UserCacheByName, userReq.Username)
+	// 尝试从缓存或数据库中获取用户数据
 	err := utils.GetData(key, &userR, fun)
-	// 查到了
+	// 如果没有错误，说明找到了匹配的用户，因此返回一个错误响应
 	if err == nil {
 		return pkgResp.ErrorResponseData("用户名已存在"), errors.New("Business Error")
 	}
-	// 有error
+	// 如果错误不是记录未找到的错误，说明查询过程中出现了问题，因此返回一个错误响应
 	if !errors.Is(err, gorm.ErrRecordNotFound) {
 		global.Logger.Errorf("查询数据失败: %v", err)
 		return pkgResp.ErrorResponseData("系统繁忙，请稍后再试~"), errors.New("Business Error")
 	}
-	// 创建用户
+	// 创建一个新的用户对象，该对象的属性基于请求中的数据
 	newUser := model.User{
 		Name:     userReq.Username,
 		Password: userReq.Password,
 		IPInfo:   "{}",
 	}
-	// 创建对象
+	// 尝试在数据库中创建新的用户对象，如果出现错误，返回一个错误响应
 	if err := userQ.Omit(user.OpenID).Create(&newUser); err != nil {
 		return pkgResp.ErrorResponseData("系统繁忙，请稍后再试~"), errors.New("Business Error")
 	}
+	// 如果一切顺利，返回一个成功的响应
 	return pkgResp.SuccessResponseDataWithMsg("注册成功"), nil
 }
 

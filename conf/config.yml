@@ -1,0 +1,21 @@
+mysql:
+  host: 127.0.0.1
+  port: 3306
+  username: root
+  password: Milefer
+jwt:
+  secret: diting
+log:
+  log_file_path: ./logs
+  log_file_name: diting.log
+minio:
+  accessKey: admin
+  accessSecret: minioadmin
+  endPoint: 127.0.0.1:9000
+  useSSL: false
+redis:
+  host: 127.0.0.1
+  password: Milefer
+rocketmq:
+  host: 127.0.0.1:9876
+  group: diting
