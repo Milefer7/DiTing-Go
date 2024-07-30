@@ -23,7 +23,12 @@ func InitRouter() {
 
 // 初始化websocket
 func initWebSocket() {
+	// 使用 http.HandleFunc 注册一个 HTTP 处理程序，用于处理 "/websocket" 路径上的请求
+	// websocketService.Connect 是一个处理函数，用于处理来自客户端的 WebSocket 连接请求
 	http.HandleFunc("/websocket", websocketService.Connect)
+
+	// 启动 HTTP 服务器，监听 localhost:5001 地址
+	// 任何访问该地址的 HTTP 请求都会被 http.DefaultServeMux 处理
 	log.Fatal(http.ListenAndServe("localhost:5001", nil))
 }
 
@@ -32,14 +37,14 @@ func initGin() {
 	router := gin.Default()
 	router.Use(middleware.LoggerToFile())
 	router.Use(middleware.Cors())
-	//添加swagger访问路由
+	// 添加swagger访问路由
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	// 不需要身份验证的路由
 	apiPublic := router.Group("/api/public")
 	{
-		//获取标签列表
+		//注册
 		apiPublic.POST("/register", controller.RegisterController)
-		//新建标签
+		//登录
 		apiPublic.POST("/login", controller.LoginController)
 	}
 
@@ -68,35 +73,48 @@ func initGin() {
 	apiGroup := router.Group("/api/group")
 	apiGroup.Use(middleware.JWT())
 	{
-		//创建群聊
+		// 创建群聊
 		apiGroup.POST("/create", controller.CreateGroupController)
+		// 删除群聊
 		apiGroup.DELETE("/:id", service.DeleteGroupService)
+		// 加入群聊
 		apiGroup.POST("/join", service.JoinGroupService)
+		// 退出群聊
 		apiGroup.POST("/quit", service.QuitGroupService)
+		// 获取群聊成员列表
 		apiGroup.GET("/getGroupMemberList", service.GetGroupMemberListService)
+		// 授予管理员权限
 		apiGroup.POST("/grantAdministrator", service.GrantAdministratorService)
+		// 移除管理员权限
 		apiGroup.POST("/removeAdministrator", service.RemoveAdministratorService)
 	}
 
 	apiContact := router.Group("/api/contact")
 	apiContact.Use(middleware.JWT())
 	{
+		// 获取联系人列表
 		apiContact.GET("getContactList", controller.GetContactListController)
+		// 获取新的联系人列表
 		apiContact.GET("getNewContactList", controller.GetNewContactListController)
+		// 获取联系人详情
 		apiContact.GET("getMessageList", service.GetContactDetailService)
+		// 获取新的消息列表
 		apiContact.GET("getNewMsgList", controller.GetNewMsgListController)
+		// 获取批量用户信息
 		apiContact.POST("userInfo/batch", controller.GetUserInfoBatchController)
 	}
 
 	apiMsg := router.Group("/api/chat")
 	apiMsg.Use(middleware.JWT())
 	{
+		// 发送消息
 		apiMsg.POST("msg", controller.SendMessageController)
 	}
 
 	apiFile := router.Group("/api/file")
 	apiFile.Use(middleware.JWT())
 	{
+		// 上传文件
 		apiFile.GET("getPreSigned", service.GetPreSigned)
 	}
 

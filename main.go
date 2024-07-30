@@ -11,5 +11,7 @@ import (
 // @name Authorization
 func main() {
 	//global.InitDB()
+	//dal.DB.AutoMigrate(&model.User{}) // sql文件中没有user表，这里手动导入一下
 	routes.InitRouter()
+
 }

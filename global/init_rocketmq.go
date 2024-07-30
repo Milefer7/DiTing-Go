@@ -11,6 +11,8 @@ var RocketProducer rocketmq.Producer
 func init() {
 	host := viper.GetString("rocketmq.host")
 	group := viper.GetString("rocketmq.group")
+	// 手动指定 broker IP 地址
+	//brokerAddr := "127.0.0.1:10911"
 	RocketProducer, _ = rocketmq.NewProducer(
 		// 设置  nameSrvAddr
 		// nameSrvAddr 是 Topic 路由注册中心

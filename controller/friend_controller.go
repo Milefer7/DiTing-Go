@@ -111,7 +111,7 @@ func GetUserApplyController(c *gin.Context) {
 
 // IsFriendController 是否为好友关系
 //
-//	@Summary	是否为好友关系
+//	@Summary	判断是否是好友
 //	@Produce	json
 //	@Param		uid	body		int					true	"好友uid"
 //	@Success	200	{object}	resp.ResponseData	"成功"

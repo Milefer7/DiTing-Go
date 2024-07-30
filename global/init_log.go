@@ -12,8 +12,8 @@ import (
 var Logger *logrus.Logger
 
 func init() {
-	logFilePath := viper.GetString("log.log_file_path")
-	logFileName := viper.GetString("log.log_file_name")
+	logFilePath := viper.GetString("logs.log_file_path")
+	logFileName := viper.GetString("logs.log_file_name")
 	//日志文件
 	fileName := path.Join(logFilePath, logFileName)
 	//写入文件
@@ -31,7 +31,7 @@ func init() {
 	if err == nil {
 		Logger.SetOutput(fileAndStdoutWriter)
 	} else {
-		Logger.Info("failed to log to file.")
+		Logger.Info("failed to logs to file.")
 	}
 
 	//设置日志级别

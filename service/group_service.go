@@ -504,9 +504,9 @@ func QuitGroupService(c *gin.Context) {
 	return
 }
 
-// GetGroupMemberListService 退出群聊
+// GetGroupMemberListService 获取群聊成员列表
 //
-//	@Summary	退出群聊
+//	@Summary	获取群聊成员列表
 //	@Produce	json
 //	@Param		id	body		int					true	"房间id"
 //	@Success	200	{object}	resp.ResponseData	"成功"

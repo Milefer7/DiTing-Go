@@ -26,21 +26,25 @@ import (
 
 // ApplyFriendService 添加好友
 func ApplyFriendService(uid int64, applyReq req.UserApplyReq) (resp.ResponseData, error) {
+	// 创建上下文
 	ctx := context.Background()
 	friendUid := applyReq.Uid
 	user := global.Query.User
 	userQ := user.WithContext(ctx)
 
+	// 创建用户ID数组并排序
 	uids := utils.Int64Slice{uid, friendUid}
 	sort.Sort(uids)
 	key := fmt.Sprintf(domainEnum.UserAndFriendLock, uids[0], uids[1])
+
+	// 获取分布式锁
 	mutex, err := utils.GetLock(key)
 	if err != nil {
-		return resp.ErrorResponseData("系统正忙，请稍后再试"), err
+		return resp.ErrorResponseData("1系统正忙，请稍后再试"), err
 	}
 	defer utils.ReleaseLock(mutex)
 
-	//检查用户是否存在
+	// 检查目标用户是否存在
 	fun := func() (interface{}, error) {
 		return userQ.Where(user.ID.Eq(friendUid)).First()
 	}
@@ -52,19 +56,19 @@ func ApplyFriendService(uid int64, applyReq req.UserApplyReq) (resp.ResponseData
 			return resp.ErrorResponseData("用户不存在"), errors.New("Business Error")
 		}
 		global.Logger.Errorf("查询用户失败 %s", err)
-		return resp.ErrorResponseData("系统正忙，请稍后再试"), errors.New("Business Error")
+		return resp.ErrorResponseData("2系统正忙，请稍后再试"), errors.New("Business Error")
 	}
 
-	// 检查是否已经是好友关系
+	// 检查是否已经是好友
 	isFriend, err := IsFriend(uid, friendUid)
 	if err != nil {
 		global.Logger.Errorf("查询好友失败 %s", err)
-		return resp.ErrorResponseData("系统正忙，请稍后再试"), errors.New("Business Error")
+		return resp.ErrorResponseData("3系统正忙，请稍后再试"), errors.New("Business Error")
 	}
-	// 已经是好友
 	if isFriend {
 		return resp.ErrorResponseData("已经是好友"), errors.New("Business Error")
 	}
+
 	// 检查是否已经发送过好友请求
 	userApply := global.Query.UserApply
 	userApplyQ := userApply.WithContext(ctx)
@@ -74,34 +78,32 @@ func ApplyFriendService(uid int64, applyReq req.UserApplyReq) (resp.ResponseData
 	}
 	key = fmt.Sprintf(domainEnum.UserApplyCacheByUidAndFriendUid, uid, friendUid)
 	err = utils.GetData(key, &userApplyR, fun)
-	// 查到了
 	if err == nil {
 		return resp.ErrorResponseData("已发送过好友请求，请等待对方同意"), errors.New("Business Error")
 	}
 	if !errors.Is(err, gorm.ErrRecordNotFound) {
 		global.Logger.Errorf("查询好友请求失败 %s", err)
-		return resp.ErrorResponseData("系统正忙，请稍后再试"), errors.New("Business Error")
+		return resp.ErrorResponseData("4系统正忙，请稍后再试"), errors.New("Business Error")
 	}
 
-	// 检查对方是否给我们发送过好友请求，如果是，直接同意
+	// 检查对方是否已发送好友请求，如果是，直接同意
 	fun = func() (interface{}, error) {
 		return userApplyQ.Where(userApply.UID.Eq(friendUid), userApply.TargetID.Eq(uid)).First()
 	}
 	key = fmt.Sprintf(domainEnum.UserApplyCacheByUidAndFriendUid, friendUid, uid)
 	err = utils.GetData(key, &userApplyR, fun)
-	// 查到了
 	if err == nil {
 		err := AgreeFriend(uid, friendUid)
 		if err != nil {
 			global.Logger.Errorf("同意好友请求失败 %s", err)
-			return resp.ErrorResponseData("系统正忙，请稍后再试"), errors.New("Business Error")
+			return resp.ErrorResponseData("5系统正忙，请稍后再试"), errors.New("Business Error")
 		}
 
 		return resp.SuccessResponseData(nil), nil
 	}
 	if !errors.Is(err, gorm.ErrRecordNotFound) {
 		global.Logger.Errorf("查询好友请求失败 %s", err)
-		return resp.ErrorResponseData("系统正忙，请稍后再试"), errors.New("Business Error")
+		return resp.ErrorResponseData("6系统正忙，请稍后再试"), errors.New("Business Error")
 	}
 
 	// 发送好友请求
@@ -114,8 +116,9 @@ func ApplyFriendService(uid int64, applyReq req.UserApplyReq) (resp.ResponseData
 	})
 	if err != nil {
 		global.Logger.Errorf("插入好友请求失败 %s", err)
-		return resp.ErrorResponseData("系统正忙，请稍后再试"), errors.New("Business Error")
+		return resp.ErrorResponseData("7系统正忙，请稍后再试"), errors.New("Business Error")
 	}
+
 	// 发送好友申请事件
 	err = jsonUtils.SendMsgSync(domainEnum.FriendApplyTopic, model.UserApply{
 		UID:        uid,
@@ -125,9 +128,10 @@ func ApplyFriendService(uid int64, applyReq req.UserApplyReq) (resp.ResponseData
 		ReadStatus: enum.NO,
 	})
 	if err != nil {
-		return resp.ErrorResponseData("系统正忙，请稍后再试"), errors.New("Business Error")
+		return resp.ErrorResponseData("8系统正忙，请稍后再试"), errors.New("Business Error")
 	}
-	//time.Sleep(30 * time.Second)
+
+	// 返回成功响应
 	return resp.SuccessResponseData(nil), nil
 }
 
