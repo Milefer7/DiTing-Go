@@ -26,3 +26,4 @@ go.work
 /conf/config.yml
 !/conf/config.yml
 !/.github/workflows/reademe-contributors.yml
+conf
